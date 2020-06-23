@@ -1,0 +1,15 @@
+.loginmain{
+    width: 830px;
+    height: 375px;
+    padding: 60px 0px;
+    padding-left: 60px;
+    padding-right: 40px;
+    background-color: #fff;
+    border-radius: 9px;
+    border: 1px solid rgba(46, 91, 255, 0.08);
+    box-shadow: 0 7px 28px 0 rgba(0, 0, 0, 0.08);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
