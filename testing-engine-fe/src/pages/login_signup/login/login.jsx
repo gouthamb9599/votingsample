@@ -8,7 +8,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import LoginDiv from '../../../components/login/logindiv'
+import LoginDiv from '../../../components/login/logindiv';
+// import bg from '../../../images/bg.jpg'
 import './login.css'
 
 function TabPanel(props) {
@@ -55,11 +56,11 @@ export default function Login() {
     };
 
     return (
-        <div>
+        <div className="base">
             <div>
-                Testing Engine
-        </div>
-            <div className="loginmain">
+                <h3 className="title-tag"> Testing Engine</h3>
+            </div>
+            <div className=" loginmain">
                 <div className={classes.root}>
                     <Paper >
                         <Tabs
@@ -69,8 +70,8 @@ export default function Login() {
                             textColor="primary"
                             centered
                         >
-                            <Tab label="Student" {...a11yProps(0)} />
-                            <Tab label="Teacher" {...a11yProps(1)} />
+                            <Tab label="Student Login" {...a11yProps(0)} />
+                            <Tab label="Teacher Login" {...a11yProps(1)} />
                         </Tabs>
                     </Paper>
                     <TabPanel value={value} index={0}>
@@ -84,6 +85,6 @@ export default function Login() {
       </TabPanel> */}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

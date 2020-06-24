@@ -1,9 +1,13 @@
 import React from "react";
 import "./signupdiv.css";
-
+import InputLabel from '@material-ui/core/InputLabel';
+// import NativeSelect from '@material-ui/core/NativeSelect';
+import Select from '@material-ui/core/Select';
+import { MenuItem } from "@material-ui/core";
 // import { Redirect } from 'react0-router-dom';
 // import history from './history';
-// import axios from "axios";
+import axios from "axios";
+import swal from 'sweetalert';
 
 // const { pool, Client } = require('pg');
 
@@ -14,92 +18,138 @@ class SignupDiv extends React.Component {
             name: "",
             email: "",
             role: "",
-            stname: "",
             password: "",
             cpassword: "",
-            isteacher: true,
-            namearray: [],
-            image: null,
-            imge: false,
-            file: null
         };
     }
+    ValidateEmail(mail) {
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+            return (true)
+        }
+        swal("warning", "You have entered an invalid email address!")
+        return (false)
+    }
+    signup = (e) => {
+        // e.preventDefault();
+        if (this.state.name === "") {
+            swal("warning", "Enter your name");
+        } else if (this.state.email === "") {
+            swal('warning', "Enter your Email ID");
+        } else if (this.state.password !== this.state.cpassword) {
+            swal("warning", "passwords does not match");
+        } else {
+            if (this.state.role === "teacher") {
+                const test = this.ValidateEmail(this.state.email);
+                axios.post("http://localhost:5000/teacher/signup", { name: this.state.name, email: this.state.email, password: this.state.password }).then(res => {
+                    if (res.data.success === true) {
+                        console.log('data entered successfully')
+                        console.log(res);
+                    }
+                });
 
+            }
+            if (this.state.role === "student") {
+                const test = this.ValidateEmail(this.state.email);
+                axios.post("http://localhost:5000/student/signup", { name: this.state.name, email: this.state.email, password: this.state.password }).then(res => {
+                    if (res.data.success === true) {
+                        console.log('data entered successfully')
+                    }
+                    else {
+                        console.log(res);
+                    }
+                });
+
+            }
+        }
+
+    }
+    handleChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
+    };
+    handlechange = (event) => {
+        console.log(event.target.value)
+        this.setState({ role: (event.target.value) })
+    }
     render() {
         return (
-            <form className="signup">
-                Name
-                <br />
-                <input
-                    className="form-alignment"
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="Name"
-                    onChange={e => this.handleChange(e)}
-                />
-                <br />
-            Email
-                <br />
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Email"
-                    onChange={e => this.handleChange(e)}
-                />
-                <br />
+            <div>
 
-                <div className="col-25">
-                    <label htmlFor="fname">Create an account as ?</label>
-                </div>
-                <div className="col-75">
-                    <select id="role" className="selectstyle" name="role">
-                        <option value="Teacher">Teacher</option>
-                        <option value="Student">Student</option>
+                <div className="signupset" align="center">
+                    <form className="signup">
+                        <input
+                            className="form-alignment"
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Name"
+                            className="form-alignments"
+                            onChange={e => this.handleChange(e)}
+                        />
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Email"
+                            className="form-alignments"
+                            onChange={e => this.handleChange(e)}
+                        />
+                        {/* <div className="col-25">
+                        <label htmlFor="fname">Create an account as ?</label>
+                    </div>
+                    <div className="col-75">
+                        <select id="role" className="selectstyle" name="role">
+                            <option value="Teacher">Teacher</option>
+                            <option value="Student">Student</option>
 
-                    </select>
-                </div>
-                <br />
-            Password
-                <br />
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Password"
-                    onChange={e => this.handleChange(e)}
-                />
-                <br />
-            Confirm Password
-                <br />
-                <input
-                    type="password"
-                    id="confirm"
-                    name="cpassword"
-                    placeholder="Confirm Password"
-                    onChange={e => this.handleChange(e)}
-                />
-                <br />
-                <button
-                    className="buttonstyle"
-                    id="send"
-                    onClick={e => {
-                        this.signup(e);
-                    }}
-                >
-                    Signup
+                        </select>
+                    </div> */}
+                        {/* <div align="center" className="selectset"> */}
+                        <InputLabel id="demo-customized-select-label">Create an account as </InputLabel>
+                        <Select
+                            id="demo-customized-select-native"
+                            value={this.state.role}
+                            onChange={this.handlechange}>
+                            <MenuItem value="">
+                                <em>None</em>
+                            </MenuItem>
+                            <MenuItem value={"teacher"}>Teacher</MenuItem>
+                            <MenuItem value={"student"}>Student</MenuItem>
+                        </Select>
+                        {/* </div> */}
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Password"
+                            className="form-alignments"
+                            onChange={e => this.handleChange(e)}
+                        />
+                        <input
+                            type="password"
+                            id="confirm"
+                            name="cpassword"
+                            placeholder="Confirm Password"
+                            className="form-alignments"
+                            onChange={e => this.handleChange(e)}
+                        />
+                        <button
+                            className="buttonstyle"
+                            id="send"
+                            onClick={e => {
+                                this.signup(e);
+                            }}>
+                            Signup
             </button>
-                <br />
-                <div className="buttins">
-                    <p className="para">Have an account?</p>
-                    <button className="buttonstyle">
-                        <a className="line" href="/">
-                            Login
-                </a>
-                    </button>
+                        <div className="buttins">
+                            <p className="para">Have an account?</p>
+                            <button className="buttonstyle">
+                                <a className="line" href="/">
+                                    Login</a>
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>)
+            </div>)
     }
 }
 export default SignupDiv;

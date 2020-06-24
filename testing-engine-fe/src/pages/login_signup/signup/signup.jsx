@@ -1,19 +1,18 @@
 import React from 'react';
 import SignupDiv from '../../../components/signup/signupdiv'
+import './signup.css'
 
 
 
 export default function Signup() {
 
     return (
-        <div>
+        <div className="base">
             <div>
-                Testing Engine
-    </div>
+                <h3 className="title-tag"> Testing Engine</h3>
+            </div>
             <div className="loginmain" >
-                <div>
-                    <h2>Signup</h2>
-                </div>
+                <p className="page-tag">SIGNUP</p>
                 <div>
                     <SignupDiv></SignupDiv>
                 </div>
