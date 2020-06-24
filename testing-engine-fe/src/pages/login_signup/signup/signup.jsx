@@ -11,11 +11,8 @@ export default function Signup() {
             <div>
                 <h3 className="title-tag"> Testing Engine</h3>
             </div>
-            <div className="loginmain" >
-                <p className="page-tag">SIGNUP</p>
-                <div>
-                    <SignupDiv></SignupDiv>
-                </div>
+            <div className="signupmain" >
+                <SignupDiv></SignupDiv>
             </div>
         </div>
     );

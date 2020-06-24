@@ -85,11 +85,11 @@ class SignupDiv extends React.Component {
     render() {
         return (
             <div>
-
+                <p className="page-tag">SIGNUP</p>
                 <div className="signupset" align="center">
                     <form className="signup">
                         <input
-                            className="form-alignment"
+                            className="form-alignments"
                             type="text"
                             id="name"
                             name="name"

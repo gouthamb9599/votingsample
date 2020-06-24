@@ -42,6 +42,7 @@ function a11yProps(index) {
 
 const useStyles = makeStyles((theme) => ({
     root: {
+
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
     },
@@ -61,7 +62,10 @@ export default function Login() {
                 <h3 className="title-tag"> Testing Engine</h3>
             </div>
             <div className=" loginmain">
-                <div className={classes.root}>
+                <div style={{
+                    height: "361px",
+                    width: "320px"
+                }} className={classes.root}>
                     <Paper >
                         <Tabs
                             value={value}
@@ -74,10 +78,10 @@ export default function Login() {
                             <Tab label="Teacher Login" {...a11yProps(1)} />
                         </Tabs>
                     </Paper>
-                    <TabPanel value={value} index={0}>
+                    <TabPanel className="tabset" value={value} index={0}>
                         <LoginDiv role={"student"} ></LoginDiv>
                     </TabPanel>
-                    <TabPanel value={value} index={1}>
+                    <TabPanel className="tabset" value={value} index={1}>
                         <LoginDiv role={"teacher"} ></LoginDiv>
                     </TabPanel>
                     {/* <TabPanel value={value} index={2}>
