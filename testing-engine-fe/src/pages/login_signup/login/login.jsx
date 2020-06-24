@@ -40,16 +40,15 @@ function a11yProps(index) {
     };
 }
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-
-        flexGrow: 1,
-        backgroundColor: theme.palette.background.paper,
-    },
-}));
+// const useStyles = makeStyles((theme) => ({
+//     root: {
+//         flexGrow: 1,
+//         backgroundColor: theme.palette.background.paper,
+//     },
+// }));
 
 export default function Login() {
-    const classes = useStyles();
+    // const classes = useStyles();
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -62,10 +61,7 @@ export default function Login() {
                 <h3 className="title-tag"> Testing Engine</h3>
             </div>
             <div className=" loginmain">
-                <div style={{
-                    height: "361px",
-                    width: "320px"
-                }} className={classes.root}>
+                <div className='mover'>
                     <Paper >
                         <Tabs
                             value={value}
