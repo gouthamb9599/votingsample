@@ -75,10 +75,10 @@ export default function Login() {
                         </Tabs>
                     </Paper>
                     <TabPanel value={value} index={0}>
-                        <LoginDiv value={0} ></LoginDiv>
+                        <LoginDiv role={"student"} ></LoginDiv>
                     </TabPanel>
                     <TabPanel value={value} index={1}>
-                        <LoginDiv value={1} ></LoginDiv>
+                        <LoginDiv role={"teacher"} ></LoginDiv>
                     </TabPanel>
                     {/* <TabPanel value={value} index={2}>
                 Item Three

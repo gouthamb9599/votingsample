@@ -15,13 +15,35 @@ TeacherController.signup = (params, res) => {
                 if (results.rowCount == 0) {
                     res.send({ success: false });
                 } else {
-                    let token = jwt.sign({ iss: results.rows[0].userid, role: 1, exp: Math.floor(Date.now() / 100) + 600 * 600 },
+                    let token = jwt.sign({ iss: results.rows[0].userid, role: "teacher", exp: Math.floor(Date.now() / 100) + 600 * 600 },
                         "secret"
                     );
                     console.log(token)
-                    res.send({ success: true });
+                    res.send({ success: true, token });
                 }
             }
         });
+}
+TeacherController.login = (params, res) => {
+    let { email, password } = params;
+    client.query(
+        "select * from teacher where email = $1 and password = $2 ", [email, password],
+        (error, results) => {
+            if (error) {
+                throw error;
+            } else {
+                if (results.rowCount == 0) {
+                    res.json({ success: false });
+                } else {
+                    let token = jwt.sign({ iss: results.rows[0].userid, role: "teacher", exp: Math.floor(Date.now() / 1000) + 60 * 60 },
+                        "secret"
+                    );
+                    console.log(results)
+                    res.send({ success: true, token, role: "teacher", data: results.rows[0] });
+
+                }
+            }
+        }
+    );
 }
 module.exports = TeacherController;

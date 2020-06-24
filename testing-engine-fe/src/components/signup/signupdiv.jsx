@@ -8,6 +8,7 @@ import { MenuItem } from "@material-ui/core";
 // import history from './history';
 import axios from "axios";
 import swal from 'sweetalert';
+import history from '../../history';
 
 // const { pool, Client } = require('pg');
 
@@ -26,23 +27,28 @@ class SignupDiv extends React.Component {
         if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
             return (true)
         }
-        swal("warning", "You have entered an invalid email address!")
+        swal("warning", "You have entered an invalid email address!", "warning")
         return (false)
     }
     signup = (e) => {
         // e.preventDefault();
         if (this.state.name === "") {
-            swal("warning", "Enter your name");
+            swal("warning", "Enter your name", "warning");
         } else if (this.state.email === "") {
-            swal('warning', "Enter your Email ID");
+            swal('warning', "Enter your Email ID", "warning");
         } else if (this.state.password !== this.state.cpassword) {
-            swal("warning", "passwords does not match");
+            swal("warning", "passwords does not match", "warning");
         } else {
             if (this.state.role === "teacher") {
                 const test = this.ValidateEmail(this.state.email);
                 axios.post("http://localhost:5000/teacher/signup", { name: this.state.name, email: this.state.email, password: this.state.password }).then(res => {
                     if (res.data.success === true) {
                         console.log('data entered successfully')
+                        swal("you have registered successfully", "Wait until your access is approved", "success")
+                        // localStorage.setItem('user', JSON.stringify({ token: res.data.token }));
+                        this.props.history.push({
+                            pathname: "/"
+                        });
                         console.log(res);
                     }
                 });
@@ -53,6 +59,12 @@ class SignupDiv extends React.Component {
                 axios.post("http://localhost:5000/student/signup", { name: this.state.name, email: this.state.email, password: this.state.password }).then(res => {
                     if (res.data.success === true) {
                         console.log('data entered successfully')
+                        swal("you have registered successfully", "Wait until your access is approved", "success")
+                        // localStorage.setItem('user', JSON.stringify({ token: res.data.token }));
+                        console.log(res);
+                        this.props.history.push({
+                            pathname: "/"
+                        });
                     }
                     else {
                         console.log(res);
