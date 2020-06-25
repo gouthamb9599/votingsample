@@ -18,6 +18,7 @@ class LoginDiv extends React.Component {
             console.log(this.props.role, this.props)
             if (this.props.role == "teacher") {
                 console.log('hello')
+                this.ValidateEmail(this.state.email)
                 axios.post('http://localhost:5000/teacher/login', { email: this.state.email, password: this.state.password })
                     .then(res => {
                         console.log(res);
@@ -37,6 +38,7 @@ class LoginDiv extends React.Component {
 
             else if (this.props.role == "student") {
                 console.log('hello')
+                this.ValidateEmail(this.state.email)
                 axios.post('http://localhost:5000/student/login', { email: this.state.email, password: this.state.password })
                     .then(res => {
                         console.log(res);
@@ -77,6 +79,13 @@ class LoginDiv extends React.Component {
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     };
+    ValidateEmail(mail) {
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+            return (true)
+        }
+        swal("warning", "You have entered an invalid email address!", "warning")
+        return (false)
+    }
 
     render() {
         return (

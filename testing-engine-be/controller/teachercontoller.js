@@ -18,7 +18,6 @@ TeacherController.signup = (params, res) => {
                     let token = jwt.sign({ iss: results.rows[0].userid, role: "teacher", exp: Math.floor(Date.now() / 100) + 600 * 600 },
                         "secret"
                     );
-                    console.log(token)
                     res.send({ success: true, token });
                 }
             }

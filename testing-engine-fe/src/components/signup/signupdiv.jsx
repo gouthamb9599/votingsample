@@ -8,7 +8,7 @@ import { MenuItem } from "@material-ui/core";
 // import history from './history';
 import axios from "axios";
 import swal from 'sweetalert';
-import history from '../../history';
+// import history from '../../history';
 
 // const { pool, Client } = require('pg');
 
@@ -31,7 +31,7 @@ class SignupDiv extends React.Component {
         return (false)
     }
     signup = (e) => {
-        // e.preventDefault();
+        e.preventDefault();
         if (this.state.name === "") {
             swal("warning", "Enter your name", "warning");
         } else if (this.state.email === "") {
@@ -42,13 +42,12 @@ class SignupDiv extends React.Component {
             if (this.state.role === "teacher") {
                 const test = this.ValidateEmail(this.state.email);
                 axios.post("http://localhost:5000/teacher/signup", { name: this.state.name, email: this.state.email, password: this.state.password }).then(res => {
+                    console.log(res);
                     if (res.data.success === true) {
                         console.log('data entered successfully')
-                        swal("you have registered successfully", "Wait until your access is approved", "success")
+                        swal("you have registered successfully", "login into your account", "success")
                         // localStorage.setItem('user', JSON.stringify({ token: res.data.token }));
-                        this.props.history.push({
-                            pathname: "/"
-                        });
+                        debugger;
                         console.log(res);
                     }
                 });
@@ -61,10 +60,9 @@ class SignupDiv extends React.Component {
                         console.log('data entered successfully')
                         swal("you have registered successfully", "Wait until your access is approved", "success")
                         // localStorage.setItem('user', JSON.stringify({ token: res.data.token }));
+                        debugger;
                         console.log(res);
-                        this.props.history.push({
-                            pathname: "/"
-                        });
+
                     }
                     else {
                         console.log(res);
