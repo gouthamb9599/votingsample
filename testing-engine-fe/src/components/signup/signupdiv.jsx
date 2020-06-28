@@ -1,5 +1,6 @@
 import React from "react";
 import "./signupdiv.css";
+import { BrowserRouter as Router, Route, Switch, withRouter } from "react-router-dom";
 import InputLabel from '@material-ui/core/InputLabel';
 // import NativeSelect from '@material-ui/core/NativeSelect';
 import Select from '@material-ui/core/Select';
@@ -162,4 +163,4 @@ class SignupDiv extends React.Component {
             </div>)
     }
 }
-export default SignupDiv;
+export default withRouter(SignupDiv);

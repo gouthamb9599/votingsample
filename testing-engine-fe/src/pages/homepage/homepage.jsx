@@ -1,7 +1,7 @@
-import React from 'react'
+import React from 'react';
+import { BrowserRouter as withRouter } from 'react-router-dom'
 
-class Homepage extends React.Component {
-
-
+function Homepage() {
+    return (<div></div>)
 }
-export default Homepage;
+export default (Homepage);

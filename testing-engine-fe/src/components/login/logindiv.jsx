@@ -1,5 +1,6 @@
 import React from 'react';
 import './logindiv.css';
+import { BrowserRouter as Router, Route, Switch, withRouter } from "react-router-dom";
 import axios from 'axios'
 import history from '../../history';
 import swal from 'sweetalert';
@@ -13,7 +14,7 @@ class LoginDiv extends React.Component {
     }
 
     check = (e) => {
-        console.log(this.state.email, this.state.password)
+        // console.log(this.state.email, this.state.password)
         if (this.state.email !== "admin") {
             console.log(this.props.role, this.props)
             if (this.props.role == "teacher") {
@@ -45,10 +46,10 @@ class LoginDiv extends React.Component {
                         // const users = res.data;
                         if (res.data.success === true) {
                             console.log('details verified')
-                            console.log(res.data.data.access)
-                            if (res.data.data.access === true) {
+                            const studentdata = res.data.data
+                            if (studentdata.Access === true) {
                                 localStorage.setItem('user', JSON.stringify({ token: res.data.token }));
-                                this.props.history.push({ pathname: '/home' });
+                                // this.props.history.push({ pathname: '/home' });
 
                             }
                             else {
@@ -61,19 +62,20 @@ class LoginDiv extends React.Component {
                         }
                     })
             }
-            else {
-                if (this.state.email === "admin" && this.state.password === "admin") {
-                    console.log("admin")
-                    // localStorage.setItem('admin', id);
-                    // this.props.history.push({ pathname: '/admin', state: { admin: true } });
-
-                }
-                else {
-                    swal("invalid credentials", "retry again", "warning");
-                }
+        }
+        else {
+            if (this.state.email === "admin" && this.state.password === "admin") {
+                console.log("admin")
+                localStorage.setItem('admin', "admin");
+                this.props.history.push({ pathname: '/Admin' });
 
             }
+            else {
+                swal("invalid credentials", "retry again", "warning");
+            }
+
         }
+
 
     }
     handleChange = (e) => {
@@ -116,4 +118,4 @@ class LoginDiv extends React.Component {
         )
     }
 }
-export default LoginDiv;
+export default withRouter(LoginDiv);

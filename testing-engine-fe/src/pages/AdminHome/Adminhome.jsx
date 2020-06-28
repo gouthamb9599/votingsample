@@ -1,9 +1,11 @@
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import React from 'react';
+import React, { useEffect } from 'react';
+import history from '../../history';
+import { BrowserRouter as Router, Route, Switch, withRouter } from "react-router-dom";
 import clsx from 'clsx';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
@@ -14,10 +16,13 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ListItemText from '@material-ui/core/ListItemText';
 import './Adminhome.css';
-
-const drawerWidth = 240
+import Axios from 'axios';
+import swal from 'sweetalert';
+const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
 
     appBar: {
@@ -33,6 +38,13 @@ const useStyles = makeStyles((theme) => ({
             easing: theme.transitions.easing.easeOut,
             duration: theme.transitions.duration.enteringScreen,
         }),
+    },
+    head: {
+        backgroundColor: theme.palette.common.black,
+        color: theme.palette.common.white,
+    },
+    body: {
+        fontSize: 14,
     },
     drawer: {
         width: drawerWidth,
@@ -58,10 +70,24 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function AdminHome() {
+
+function AdminHome(props) {
     const classes = useStyles();
     const theme = useTheme();
+    const [Button, setButton] = React.useState(false);
     const [open, setOpen] = React.useState(false);
+    const [Subjectid, setSubjectid] = React.useState(0);
+    const [Accessarray, setAccessarray] = React.useState([]);
+    const [Assignarray, setAssignarray] = React.useState([]);
+    const [Subjectarray, setSubjectarray] = React.useState([]);
+    const [Accessview, setAccessview] = React.useState(false);
+    const [Assignview, setAssignview] = React.useState(false);
+    const accessset = () => {
+        setAccessview(true);
+    }
+    const assignset = () => {
+        setAssignview(true);
+    }
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -69,6 +95,58 @@ export default function AdminHome() {
     const handleDrawerClose = () => {
         setOpen(false);
     };
+    const provideaccess = (id) => {
+        console.log(id);
+        Axios.post(`http://localhost:5000/admin/provideaccess`, { studentid: id })
+            .then(res => {
+                console.log(res.data.success);
+                if (res.data.success === true) {
+                    swal("user Authorized", "Account Activated", "success");
+
+                }
+            })
+    }
+    const assignsubject = (id, subject) => {
+        console.log(id, subject)
+        Axios.post(`http://localhost:5000/admin/assignsubject`, { studentid: id, subject: subject })
+            .then(res => {
+                console.log(res);
+                if (res.data.success === true) {
+                    swal("Subject Assigned", "user can attend the test now", "success");
+                }
+            })
+    }
+    const handleselect = (event) => {
+        setSubjectid(event.target.value)
+        console.log(event.target.value, Subjectid);
+
+    }
+    const logout = () => {
+        localStorage.removeItem('admin')
+        localStorage.removeItem('user');
+        props.history.push('/')
+    }
+    useEffect(() => {
+        Axios.get(`http://localhost:5000/admin/getaccesslist`)
+            .then(res => {
+                console.log(res.data.data);
+                setAccessarray(res.data.data);
+                // console.log(Commentarray);
+            })
+        Axios.get(`http://localhost:5000/admin/getassignlist`)
+            .then(res => {
+                console.log(res.data.data);
+                setAssignarray(res.data.data);
+                // console.log(Answerarray);
+            })
+        Axios.get(`http://localhost:5000/admin/getsubject`)
+            .then(res => {
+                console.log(res.data.data);
+                setSubjectarray(res.data.data);
+
+            })
+
+    }, [])
     return (
         <div>
             <div className='drawersetup'>
@@ -77,8 +155,7 @@ export default function AdminHome() {
                     position="fixed"
                     className={clsx(classes.appBar, {
                         [classes.appBarShift]: open,
-                    })}
-                >
+                    })}>
                     <Toolbar>
                         <IconButton
                             color="inherit"
@@ -103,25 +180,72 @@ export default function AdminHome() {
                     }}>
                     <div className={classes.drawerHeader}>
                         <IconButton onClick={handleDrawerClose}>
+                            < AccountCircleIcon />  Admin
                             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                         </IconButton>
                     </div>
                     <Divider />
-                    <List>
-                        {['Student Access', 'Subject Assig', 'Send email', 'Drafts'].map((text, index) => (
-                            <ListItem button key={text}>
-                                <ListItemIcon></ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItem>
-                        ))}
-                    </List>
+                    <div className="listset">
+                        <button className="buttonlist" onClick={e => accessset()}>< AccountCircleIcon /><span>Student Access</span></button>
+                    </div>
+                    <div className="listset">
+                        <button className="buttonlist" onClick={e => assignset()}>< AssignmentTurnedInIcon /><span>Subject Assignment</span></button>
+                    </div>
+                    <div className="listset">
+                        <button className="buttonlist" onClick={e => logout()}>Logout</button>
+                    </div>
                 </Drawer>
+                <div>
+                    {Accessview ?
+                        <table id="customers">
+                            <thead>
+                                <tr class="w3-light-grey">
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Email</th>
+                                    <th>Password</th>
+                                    <th>Provide Access</th>
+                                </tr>
+                            </thead>
+                            {Accessarray.map((data) => (<tr>
+                                <td>{data.student_id}</td>
+                                <td>{data.name}</td>
+                                <td>{data.email}</td>
+                                <td>{data.password}</td>
+                                <td><button onClick={e => provideaccess(data.student_id)}>Authorize</button></td>
+                            </tr>))}
+                        </table> : <></>
+                    }
+                    {Assignview ?
+                        <table id="customers">
+                            <thead>
+                                <tr class="w3-light-grey">
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Email</th>
+                                    <th>Password</th>
+                                    <th>Assign Subject</th>
+                                    <th>Submit</th>
+                                </tr>
+                            </thead>
+                            {Assignarray.map((data) => (<tr>
+                                <td>{data.student_id}</td>
+                                <td>{data.name}</td>
+                                <td>{data.email}</td>
+                                <td>{data.password}</td>
+                                <td><select id="subject" name="subject" value={Subjectid} onChange={e => handleselect(e)}>
+                                    {Subjectarray.map((datas) => (<option value={datas.subject_id}>{datas.subject_name}</option>))}
+                                </select>
+                                </td>
+                                <td><button onClick={e => assignsubject(data.student_id, Subjectid)}>Submit</button></td>
+                            </tr>))}
+                        </table> : <></>
 
+                    }
+
+                </div >
             </div>
-            <div>
-
-            </div>
-
         </div >
     )
 }
+export default withRouter(AdminHome);
