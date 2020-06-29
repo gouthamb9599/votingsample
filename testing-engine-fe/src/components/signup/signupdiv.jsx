@@ -46,9 +46,9 @@ class SignupDiv extends React.Component {
                     console.log(res);
                     if (res.data.success === true) {
                         console.log('data entered successfully')
-                        swal("you have registered successfully", "login into your account", "success")
+                        // swal("you have registered successfully", "login into your account", "success")
+                        this.props.history.push({ pathname: '/home' });
                         // localStorage.setItem('user', JSON.stringify({ token: res.data.token }));
-                        debugger;
                         console.log(res);
                     }
                 });
@@ -61,7 +61,6 @@ class SignupDiv extends React.Component {
                         console.log('data entered successfully')
                         swal("you have registered successfully", "Wait until your access is approved", "success")
                         // localStorage.setItem('user', JSON.stringify({ token: res.data.token }));
-                        debugger;
                         console.log(res);
 
                     }

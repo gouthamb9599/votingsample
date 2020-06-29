@@ -27,8 +27,8 @@ class LoginDiv extends React.Component {
                         if (res.data.success === true) {
                             console.log('details verified')
                             console.log(res.data)
-                            localStorage.setItem('user', JSON.stringify({ token: res.data.token, }));
-                            // this.props.history.push({ pathname: '/home' });
+                            localStorage.setItem('teacher', JSON.stringify({ token: res.data.token, }));
+                            this.props.history.push({ pathname: '/home' });
 
                         }
                         else {
@@ -48,8 +48,8 @@ class LoginDiv extends React.Component {
                             console.log('details verified')
                             const studentdata = res.data.data
                             if (studentdata.Access === true) {
-                                localStorage.setItem('user', JSON.stringify({ token: res.data.token }));
-                                // this.props.history.push({ pathname: '/home' });
+                                localStorage.setItem('student', JSON.stringify({ token: res.data.token }));
+                                this.props.history.push({ pathname: '/home' });
 
                             }
                             else {
