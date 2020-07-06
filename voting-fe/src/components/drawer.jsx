@@ -10,6 +10,9 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import TextField from '@material-ui/core/TextField';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import swal from 'sweetalert';
 import Axios from 'axios';
 const drawerWidth = 240;
@@ -60,17 +63,53 @@ export default function PermanentDrawer(props) {
     const [newemail, setNewemail] = React.useState('');
     const [refmail, setRefmail] = React.useState('');
     const [image, setImage] = React.useState('');
+    const [user, setUser] = React.useState(0);
+    const [apply, setApply] = React.useState([]);
+    const [candidatelist, setCandidatelist] = React.useState([]);
+    const [polldata, setPollData] = React.useState([]);
+    const [openpoll, setOpenpoll] = React.useState(false);
+    const [opencandidatelist, setOpencandidatelist] = React.useState(false);
+    const [viewcamps, setViewcamps] = React.useState(false);
+    const [choosecamp, setChoosecamp] = React.useState(0);
     const [verify, setVerify] = React.useState(false);
     const [vote, setVote] = React.useState(false);
     const handlerefemail = (event) => {
         setRefmail(event.target.value);
+    }
+    const getcandidates = () => {
+        Axios.get(`http://localhost:5000/getcandidates`).then(res => {
+            console.log(res);
+            if (res.data.success === true) {
+                setCandidatelist(res.data.data);
+                setOpencandidatelist(!opencandidatelist);
+            }
+
+        })
+    }
+    const applies = () => {
+        Axios.get(`http://localhost:5000/getcamp`)
+            .then(res => {
+                if (res.data.success === true) {
+                    setApply(res.data.data);
+                    setViewcamps(!viewcamps);
+                }
+            })
     }
     const verifier = () => {
         setVerify(false);
         Axios.get(`http://localhost:5000/getimage?email=${refmail}`)
             .then(res => {
                 if (res.data.success === true) {
+                    console.log(res.data.data);
+                    setUser(res.data.data.id);
                     setImage(res.data.data.image);
+                    Axios.get(`http://localhost:5000/getcamp`)
+                        .then(res => {
+                            if (res.data.success === true) {
+                                setApply(res.data.data);
+                            }
+                        })
+
                 }
             })
         setVote(!vote);
@@ -127,6 +166,45 @@ export default function PermanentDrawer(props) {
                 }
             })
 
+    }
+    const setcampforcandidate = () => {
+        const data = JSON.parse(sessionStorage.getItem('userData'))
+        console.log(data.data.data);
+        console.log(choosecamp);
+        Axios.post(`http://localhost:5000/setcampuser`, { id: data.data.data.id, camp: choosecamp })
+            .then(res => {
+                console.log(res);
+                if (res.data.success === true) {
+                    const value = res.data.data
+                    console.log(value);
+                    swal('Campaign choosen successfully', `campaign starts on ${value[0].date} time ${value[0].startingtime}`, 'success');
+                }
+            })
+    }
+    const givevote = (id) => {
+        Axios.post(`http://localhost:5000/givevote`, { candidateid: id, userid: user, campid: choosecamp })
+            .then(res => {
+                if (res.data.success === true) {
+                    swal('user voted successfully', 'verify the next user', 'success');
+                }
+            })
+    }
+    const setcampforuser = () => {
+        Axios.post(`http://localhost:5000/setcampca`, { id: user, camp: choosecamp })
+            .then(res => {
+                console.log(res);
+                if (res.data.success === true) {
+                    const value = res.data.data
+                    console.log(value);
+                    setPollData(res.data.data)
+                    setVote(false);
+                    setOpenpoll(true);
+                }
+            })
+    }
+    const handlecamp = (event) => {
+        console.log(event.target.value);
+        setChoosecamp(event.target.value);
     }
     const handleChange = (event) => {
         setCampname(event.target.value);
@@ -192,7 +270,7 @@ export default function PermanentDrawer(props) {
                 </List>
                 <Divider />
                 <List>
-                    <ListItem button key='Candidates List'>
+                    <ListItem button onClick={() => getcandidates()} key='Candidates List'>
                         <ListItemText primary='Candidates List' />
                     </ListItem>
                 </List>
@@ -226,13 +304,13 @@ export default function PermanentDrawer(props) {
                     <div className={classes.toolbar} />
                     <Divider />
                     <List>
-                        <ListItem button key='apply for election'>
+                        <ListItem button onClick={applies} key='apply for election'>
                             <ListItemText primary='apply for election' />
                         </ListItem>
                     </List>
                     <Divider />
                     <List>
-                        <ListItem button key='view results'>
+                        <ListItem button onClick={viewresult} key='view results'>
                             <ListItemText primary='view results' />
                         </ListItem>
                     </List>
@@ -243,8 +321,28 @@ export default function PermanentDrawer(props) {
                         </ListItem>
                     </List>
                 </Drawer>
-
             </div>}
+            <div>
+                {viewcamps ? <div style={{ marginTop: '100px', marginLeft: '250px' }}>
+                    <InputLabel id="demo-simple-select-label">Select Campaign</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={choosecamp}
+                        onChange={handlecamp}
+                    >
+                        {apply.map(data => (<MenuItem value={data.id}>{data.name}</MenuItem>))}
+
+                    </Select>
+                    <button
+                        className="buttonstyle"
+                        id="send"
+                        onClick={setcampforcandidate}>
+                        Select Election
+            </button>
+
+                </div> : <></>}
+            </div>
             <div>
                 {camp ? <div>
                     <div className="signupmain">
@@ -368,16 +466,62 @@ export default function PermanentDrawer(props) {
             <div>
                 {vote ? <div style={{ marginTop: '100px', marginLeft: '250px' }}>
                     <img src={image} alt="user image"></img>
+                    <InputLabel id="demo-simple-select-label">Select Campaign</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={choosecamp}
+                        onChange={handlecamp}
+                    >
+                        {apply.map(data => (<MenuItem value={data.id}>{data.name}</MenuItem>))}
 
+                    </Select>
                     <button
                         className="buttonstyle"
                         id="register"
-                    // onClick={vote}
+                        onClick={setcampforuser}
                     >
                         Vote
             </button>
 
                 </div> : <></>}
+            </div>
+            <div>
+                {opencandidatelist ? <table style={{ marginTop: '100px', marginLeft: '250px' }}>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                    </tr>
+
+                    {candidatelist.map(data => (
+                        <tr>
+                            <td>{data.id}</td>
+                            <td>{data.name}</td>
+                            <td>{data.email}</td>
+                        </tr>
+                    ))}
+
+
+                </table> : <></>}
+            </div>
+            <div>
+                {openpoll ? <table style={{ marginTop: '100px', marginLeft: '250px' }}>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Vote</th>
+                    </tr>
+                    {polldata.map(data => (
+                        <tr>
+                            <td>{data.id}</td>
+                            <td>{data.name}</td>
+                            <td><button className="buttonstyle"
+                                id="vote"
+                                onClick={() => givevote(data.id)}>Vote the candidate</button></td>
+                        </tr>
+                    ))}
+                </table> : <></>}
             </div>
         </div>
     );
