@@ -146,10 +146,69 @@ const route = app => {
         const data = req.body;
         client.query(`insert into vote(candidate_id,voter_id,election) values($1,$2,$3)`, [data.candidateid, data.userid, data.campid],
             (err, results) => {
-                if (err) console.log(err);
+                if (err) console.log('13', err);
                 else {
                     if (results.rowCount !== 0) {
-                        res.send({ success: true })
+                        client.query(`select count from candidate where id=$1`, [data.candidateid],
+                            (errs, result) => {
+                                if (errs) console.log('12', errs);
+                                else {
+                                    console.log(result.rows[0].count);
+                                    const vote = ((result.rows[0].count - 0) + (1 - 0));
+                                    console.log(vote);
+                                    client.query(`update candidate set count=$1 where id=$2`, [vote, data.candidateid],
+                                        (err, result) => {
+                                            if (err) console.log(err);
+                                            else {
+                                                if (result.rowCount !== 0) {
+                                                    console.log('vote added')
+                                                    res.send({ success: true })
+                                                }
+                                            }
+                                        })
+                                }
+                            })
+
+                    }
+                }
+            })
+
+    })
+    app.get('/countvote', (req, res) => {
+        // var today = new Date();
+        // var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        const id = req.query.id;
+        client.query(`select election from candidate where id=$1`, [id],
+            (err1, result1) => {
+                if (err1) console.log(err1)
+                else {
+                    if (result1.rowCount !== 0) {
+                        const camp = result1.rows[0].election
+                        client.query(`select endingtime from campaign where id=$1 `, [camp],
+                            (err, results) => {
+                                if (err) console.log(err);
+                                else {
+                                    if (results.rowCount !== 0) {
+                                        var time = results.rows[0].endingtime.localeCompare('09:30:00');
+                                        if (time === -1) {
+                                            res.send({ success: false })
+                                        }
+                                        else {
+                                            client.query(`select * from candidate where election=$1`, [camp],
+                                                (err2, result) => {
+                                                    if (err2) console.log(err2);
+                                                    else {
+
+                                                        if (result.rowCount !== 0) {
+                                                            res.send({ success: true, data: result.rows })
+                                                        }
+                                                    }
+                                                })
+                                        }
+
+                                    }
+                                }
+                            })
                     }
                 }
             })

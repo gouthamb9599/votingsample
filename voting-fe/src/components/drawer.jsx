@@ -70,6 +70,8 @@ export default function PermanentDrawer(props) {
     const [openpoll, setOpenpoll] = React.useState(false);
     const [opencandidatelist, setOpencandidatelist] = React.useState(false);
     const [viewcamps, setViewcamps] = React.useState(false);
+    const [results, setResults] = React.useState([]);
+    const [openresults, setOpenResults] = React.useState(false);
     const [choosecamp, setChoosecamp] = React.useState(0);
     const [verify, setVerify] = React.useState(false);
     const [vote, setVote] = React.useState(false);
@@ -167,6 +169,20 @@ export default function PermanentDrawer(props) {
             })
 
     }
+    const viewresult = () => {
+        const data = JSON.parse(sessionStorage.getItem('userData'))
+        console.log(data.data.data);
+        Axios.get(`http://localhost:5000/countvote?id=${data.data.data.id}`)
+            .then(res => {
+                if (res.data.success === false) {
+                    swal('Polling is not closed yet', 'wait for the results', 'warning');
+                }
+                else if (res.data.success === true) {
+                    setResults(res.data.data);
+                    setOpenResults(!openresults);
+                }
+            })
+    }
     const setcampforcandidate = () => {
         const data = JSON.parse(sessionStorage.getItem('userData'))
         console.log(data.data.data);
@@ -177,6 +193,7 @@ export default function PermanentDrawer(props) {
                 if (res.data.success === true) {
                     const value = res.data.data
                     console.log(value);
+
                     swal('Campaign choosen successfully', `campaign starts on ${value[0].date} time ${value[0].startingtime}`, 'success');
                 }
             })
@@ -519,6 +536,22 @@ export default function PermanentDrawer(props) {
                             <td><button className="buttonstyle"
                                 id="vote"
                                 onClick={() => givevote(data.id)}>Vote the candidate</button></td>
+                        </tr>
+                    ))}
+                </table> : <></>}
+            </div>
+            <div>
+                {openresults ? <table style={{ marginTop: '100px', marginLeft: '250px' }}>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Vote Count(final)</th>
+                    </tr>
+                    {results.map(data => (
+                        <tr>
+                            <td>{data.id}</td>
+                            <td>{data.name}</td>
+                            <td>{data.count}</td>
                         </tr>
                     ))}
                 </table> : <></>}
