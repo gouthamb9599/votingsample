@@ -10,16 +10,22 @@ class Homepage extends React.Component {
 
     }
     componentWillMount() {
-        if (localStorage.getItem('AdminData') !== null) {
+        if (sessionStorage.getItem('AdminData') !== null) {
             this.setState({
                 admin: true
             })
         }
 
+
+    }
+    logout = () => {
+        this.props.history.push('/');
+        sessionStorage.clear()
     }
     render() {
         return (<div>
-            <Drawer admin={this.state.admin}></Drawer>
+            <Drawer logout={this.logout} admin={this.state.admin}></Drawer>
         </div>)
     }
 }
+export default Homepage

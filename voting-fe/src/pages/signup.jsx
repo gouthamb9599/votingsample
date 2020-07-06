@@ -22,8 +22,8 @@ class SignupDiv extends React.Component {
         swal("warning", "You have entered an invalid email address!", "warning")
         return (false)
     }
-    signup = (e) => {
-        e.preventDefault();
+    signup = () => {
+
         if (this.state.name === "") {
             swal("warning", "Enter your name", "warning");
         } else if (this.state.email === "") {
@@ -91,8 +91,8 @@ class SignupDiv extends React.Component {
                         <button
                             className="buttonstyle"
                             id="send"
-                            onClick={e => {
-                                this.signup(e);
+                            onClick={() => {
+                                this.signup();
                             }}>
                             Signup
             </button>
